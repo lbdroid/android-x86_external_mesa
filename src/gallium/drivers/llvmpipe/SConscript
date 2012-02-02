@@ -9,6 +9,8 @@ if not env['llvm']:
 
 env = env.Clone()
 
+env.Append(CPPPATH = ['.', 'duma'])
+
 llvmpipe = env.ConvenienceLibrary(
 	target = 'llvmpipe',
 	source = [
@@ -54,6 +56,9 @@ llvmpipe = env.ConvenienceLibrary(
 		'lp_tex_sample.c',
 		'lp_texture.c',
 		'lp_tile_image.c',
+		'duma/duma.c',
+		'duma/print.c',
+		'duma/sem_inc.c',
 	])
 
 env.Alias('llvmpipe', llvmpipe)

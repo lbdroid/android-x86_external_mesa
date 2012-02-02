@@ -59,6 +59,13 @@ static struct llvmpipe_resource resource_list;
 #endif
 static unsigned id_counter = 0;
 
+#define DUMA_SKIP_SETUP
+#include "duma.h"
+
+#define duma_align_malloc(_size, _alignment) _duma_memalign(_alignment, _size)
+#define duma_align_free(_ptr) _duma_free(_ptr)
+
+
 
 /**
  * Allocate storage for llvmpipe_texture::layout array.
@@ -335,7 +342,7 @@ llvmpipe_resource_destroy(struct pipe_screen *pscreen,
       winsys->displaytarget_destroy(winsys, lpr->dt);
 
       if (lpr->tiled_img.data) {
-         align_free(lpr->tiled_img.data);
+         duma_align_free(lpr->tiled_img.data);
          lpr->tiled_img.data = NULL;
       }
 
@@ -347,13 +354,13 @@ llvmpipe_resource_destroy(struct pipe_screen *pscreen,
 
       /* free linear image data */
       if (lpr->linear_img.data) {
-         align_free(lpr->linear_img.data);
+         duma_align_free(lpr->linear_img.data);
          lpr->linear_img.data = NULL;
       }
 
       /* free tiled image data */
       if (lpr->tiled_img.data) {
-         align_free(lpr->tiled_img.data);
+         duma_align_free(lpr->tiled_img.data);
          lpr->tiled_img.data = NULL;
       }
 
@@ -1044,7 +1051,7 @@ alloc_image_data(struct llvmpipe_resource *lpr,
          lpr->tiled_mip_offsets[level] = offset;
          offset += align(buffer_size, alignment);
       }
-      lpr->tiled_img.data = align_malloc(offset, alignment);
+      lpr->tiled_img.data = duma_align_malloc(offset, alignment);
       if (lpr->tiled_img.data) {
          memset(lpr->tiled_img.data, 0, offset);
       }
@@ -1073,7 +1080,7 @@ alloc_image_data(struct llvmpipe_resource *lpr,
             lpr->linear_mip_offsets[level] = offset;
             offset += align(buffer_size, alignment);
          }
-         lpr->linear_img.data = align_malloc(offset, alignment);
+         lpr->linear_img.data = duma_align_malloc(offset, alignment);
          if (lpr->linear_img.data) {
             memset(lpr->linear_img.data, 0, offset);
          }
