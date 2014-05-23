@@ -87,6 +87,13 @@ impl_thrd_routine(void *p)
     return (void*)(intptr_t)pack.func(pack.arg);
 }
 
+#ifndef _STRUCT_TIMESPEC
+#define _STRUCT_TIMESPEC
+struct timespec {
+  time_t		tv_sec;                 /* seconds */
+  long		tv_nsec;                /* nanoseconds */
+};
+#endif
 
 /*--------------- 7.25.2 Initialization functions ---------------*/
 // 7.25.2.1
